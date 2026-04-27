@@ -1,0 +1,345 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.wrap{padding:1.5rem 0}
+.section-label{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:1.5rem}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.875rem 1rem}
+.metric .lbl{font-size:12px;color:var(--color-text-secondary);margin-bottom:.3rem}
+.metric .val{font-size:20px;font-weight:500;color:var(--color-text-primary)}
+.metric .sub{font-size:11px;color:var(--color-text-tertiary);margin-top:.2rem}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem}
+h2{font-size:16px;font-weight:500;color:var(--color-text-primary);margin-bottom:1rem}
+h3{font-size:13px;font-weight:500;color:var(--color-text-secondary);margin-bottom:.6rem}
+.controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:1.25rem}
+.ctrl{display:flex;flex-direction:column;gap:4px}
+.ctrl label{font-size:12px;color:var(--color-text-secondary)}
+.ctrl select,.ctrl input{font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-align:right;padding:6px 8px;border-bottom:0.5px solid var(--color-border-tertiary)}
+th:first-child{text-align:left}
+td{padding:6px 8px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary);text-align:right;font-size:12px}
+td:first-child{text-align:left;font-weight:500}
+tr:last-child td{border-bottom:none;font-weight:500;background:var(--color-background-secondary)}
+.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500}
+.badge-blue{background:#E6F1FB;color:#0C447C}
+.badge-teal{background:#E1F5EE;color:#085041}
+.badge-amber{background:#FAEEDA;color:#633806}
+.badge-coral{background:#FAECE7;color:#712B13}
+.badge-purple{background:#EEEDFE;color:#3C3489}
+.divider{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:1.25rem 0}
+.stream-row{display:grid;grid-template-columns:160px 80px 1fr 90px;gap:8px;align-items:start;padding:.5rem 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.stream-row:last-child{border-bottom:none}
+.stream-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.stream-desc{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.stream-note{font-size:11px;color:var(--color-text-tertiary)}
+.total-row{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center;margin-top:.75rem}
+.chart-bar-wrap{margin:.25rem 0}
+.bar-bg{background:var(--color-border-tertiary);border-radius:2px;height:6px;width:100%}
+.bar-fill{height:6px;border-radius:2px;background:#378ADD}
+.tab-row{display:flex;gap:4px;margin-bottom:1rem}
+.tab{font-size:12px;padding:5px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer}
+.tab.active{background:var(--color-background-secondary);color:var(--color-text-primary);font-weight:500}
+.sector-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:.75rem}
+.sector-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem}
+.sector-card .s-name{font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.sector-card .s-val{font-size:16px;font-weight:500;margin:.3rem 0}
+.sector-card .s-lbl{font-size:10px;color:var(--color-text-secondary)}
+</style>
+
+<div class="wrap">
+<h2 id="sr-only" class="sr-only">Gigaminute revenue model across worker scales, markets, and sectors</h2>
+
+<div class="card">
+  <h2>Model parameters</h2>
+  <div class="controls">
+    <div class="ctrl">
+      <label>Workers on platform</label>
+      <select id="workers">
+        <option value="5000">5,000</option>
+        <option value="10000" selected>10,000</option>
+        <option value="25000">25,000</option>
+        <option value="50000">50,000</option>
+        <option value="100000">100,000</option>
+        <option value="250000">250,000</option>
+      </select>
+    </div>
+    <div class="ctrl">
+      <label>Market</label>
+      <select id="market">
+        <option value="aus">Australia</option>
+        <option value="nyc" selected>New York</option>
+        <option value="both">Both markets</option>
+      </select>
+    </div>
+    <div class="ctrl">
+      <label>Avg hours/week/worker</label>
+      <input type="range" id="hours" min="6" max="20" value="9" step="1" style="width:120px">
+      <span id="hours-out" style="font-size:12px;color:var(--color-text-secondary)">9 hrs</span>
+    </div>
+    <div class="ctrl">
+      <label>Platform margin on hours</label>
+      <input type="range" id="margin" min="5" max="15" value="8" step="0.5" style="width:120px">
+      <span id="margin-out" style="font-size:12px;color:var(--color-text-secondary)">8%</span>
+    </div>
+  </div>
+
+  <div id="summary-metrics" class="grid4"></div>
+</div>
+
+<div class="card">
+  <h2>All revenue streams — identified & modelled</h2>
+  <div class="tab-row">
+    <button class="tab active" onclick="setTab('all')">All streams</button>
+    <button class="tab" onclick="setTab('core')">Core labour</button>
+    <button class="tab" onclick="setTab('trailer')">Trailer / services</button>
+    <button class="tab" onclick="setTab('perks')">Perks & platform</button>
+  </div>
+  <div id="streams-table"></div>
+</div>
+
+<div class="card">
+  <h2>Scale extrapolation — annual total revenue</h2>
+  <div style="position:relative;width:100%;height:280px">
+    <canvas id="scaleChart" role="img" aria-label="Bar chart showing annual revenue at different worker scale points"></canvas>
+  </div>
+  <div id="scale-legend" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:.75rem;font-size:11px;color:var(--color-text-secondary)">
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD"></span>Core labour margin</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#1D9E75"></span>Trailer & services</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#BA7517"></span>Perks & platform</span>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Sector breakdown — hospitality, services & construction</h2>
+  <div class="controls">
+    <div class="ctrl">
+      <label>Sector split (%)</label>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:1rem">
+    <div class="ctrl">
+      <label>Hospitality %</label>
+      <input type="range" id="hosp" min="10" max="70" value="45" step="5">
+      <span id="hosp-out" style="font-size:12px;color:var(--color-text-secondary)">45%</span>
+    </div>
+    <div class="ctrl">
+      <label>Services %</label>
+      <input type="range" id="serv" min="10" max="60" value="35" step="5">
+      <span id="serv-out" style="font-size:12px;color:var(--color-text-secondary)">35%</span>
+    </div>
+    <div class="ctrl">
+      <label>Construction %</label>
+      <input type="range" id="cons" min="5" max="50" value="20" step="5">
+      <span id="cons-out" style="font-size:12px;color:var(--color-text-secondary)">20%</span>
+    </div>
+  </div>
+  <div id="sector-cards"></div>
+  <div style="position:relative;width:100%;height:220px;margin-top:1rem">
+    <canvas id="sectorChart" role="img" aria-label="Stacked bar chart comparing revenue by sector across markets"></canvas>
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const fmt = (n) => n >= 1e9 ? '$'+Math.round(n/1e7)/100+'B' : n >= 1e6 ? '$'+Math.round(n/1e4)/100+'M' : n >= 1e3 ? '$'+Math.round(n/100)/10+'K' : '$'+Math.round(n);
+const fmtFull = (n) => '$' + Math.round(n).toLocaleString();
+
+const RATES = {
+  aus: { hosp: 28.5, serv: 26.0, cons: 35.0, label: 'Australia (AUD)' },
+  nyc: { hosp: 32.0, serv: 29.0, cons: 42.0, label: 'New York (USD)' },
+  both: { hosp: 30.25, serv: 27.5, cons: 38.5, label: 'Both markets (avg)' }
+};
+
+const STREAMS = [
+  { id:'labour', name:'Platform margin on hours', cat:'core', badge:'badge-blue', badgeText:'Core', desc:'8% on every billable hour placed through platform', perWorkerFn:(w,h,m,rate)=>rate*h*52*m/100 },
+  { id:'onboard', name:'Worker onboarding fee', cat:'core', badge:'badge-blue', badgeText:'Core', desc:'One-time fee per worker verified and ID issued — $45 avg', perWorkerFn:(w,h,m,rate)=>45 },
+  { id:'rsa', name:'RSA / certification referral', cat:'trailer', badge:'badge-teal', badgeText:'Trailer', desc:'$28 referral per enrolment. ~40% of workers certify on arrival', perWorkerFn:(w,h,m,rate)=>28*0.4 },
+  { id:'whitecard', name:'White card / OSHA referral', cat:'trailer', badge:'badge-teal', badgeText:'Trailer', desc:'$35 referral per enrolment. ~25% in construction-adjacent roles', perWorkerFn:(w,h,m,rate)=>35*0.25 },
+  { id:'firstaid', name:'First aid cert referral', cat:'trailer', badge:'badge-teal', badgeText:'Trailer', desc:'$22 referral. ~20% of workers complete pre-arrival', perWorkerFn:(w,h,m,rate)=>22*0.20 },
+  { id:'mvno', name:'MVNO mobile SIM margin', cat:'trailer', badge:'badge-teal', badgeText:'Trailer', desc:'$8/month margin per active SIM. ~30% of workers subscribe', perWorkerFn:(w,h,m,rate)=>8*12*0.30 },
+  { id:'insurance', name:'Insurance admin fee', cat:'trailer', badge:'badge-teal', badgeText:'Trailer', desc:'1.2% of gross wages as admin/coordination fee on workers comp placement', perWorkerFn:(w,h,m,rate)=>rate*h*52*0.012 },
+  { id:'payroll', name:'Payroll processing fee', cat:'trailer', badge:'badge-teal', badgeText:'Trailer', desc:'$2.50/pay cycle per worker. Weekly pay = 52 cycles/yr', perWorkerFn:(w,h,m,rate)=>2.5*52 },
+  { id:'perks_trail', name:'Perks partner trailing fee', cat:'perks', badge:'badge-amber', badgeText:'Perks', desc:'Avg $4.20/worker/month from partner commission on transactions', perWorkerFn:(w,h,m,rate)=>4.20*12 },
+  { id:'qr', name:'QR scan / non-member leads', cat:'perks', badge:'badge-amber', badgeText:'Perks', desc:'$1.80 per qualified non-member lead from QR point-of-sale scans', perWorkerFn:(w,h,m,rate)=>1.80*6 },
+  { id:'employer_perks', name:'Employer perks listing fee', cat:'perks', badge:'badge-amber', badgeText:'Perks', desc:'$180/yr per employer location on network. Ratio ~1 employer per 35 workers', perWorkerFn:(w,h,m,rate)=>180/35 },
+  { id:'data', name:'Workforce analytics (employer)', cat:'perks', badge:'badge-purple', badgeText:'Platform', desc:'$95/mo SaaS fee per employer. 1 employer per 35 workers avg', perWorkerFn:(w,h,m,rate)=>95*12/35 },
+  { id:'placement_prem', name:'Priority placement premium', cat:'perks', badge:'badge-purple', badgeText:'Platform', desc:'Employers pay $12 surcharge for same-day guaranteed placement', perWorkerFn:(w,h,m,rate)=>12*0.15*52 },
+  { id:'background', name:'Background check fee', cat:'core', badge:'badge-blue', badgeText:'Core', desc:'$18 per worker. Passed on at cost + $6 admin margin', perWorkerFn:(w,h,m,rate)=>6 },
+  { id:'academy', name:'Academy module licensing', cat:'trailer', badge:'badge-teal', badgeText:'Trailer', desc:'Employer pays $3.50/worker/month for proprietary Academy onboarding modules', perWorkerFn:(w,h,m,rate)=>3.50*12 },
+  { id:'visa', name:'Visa check / work rights verification', cat:'core', badge:'badge-blue', badgeText:'Core', desc:'$12 per overseas worker verified. ~55% of platform from overseas', perWorkerFn:(w,h,m,rate)=>12*0.55 },
+  { id:'float', name:'Payment float income', cat:'perks', badge:'badge-purple', badgeText:'Platform', desc:'Gigaminute holds payroll 3 days before disbursement. Interest on float at 4.5% p.a.', perWorkerFn:(w,h,m,rate)=>rate*h*52*(3/365)*0.045 },
+  { id:'late_employer', name:'Late payment surcharge (employer)', cat:'core', badge:'badge-blue', badgeText:'Core', desc:'1.5% monthly on invoices >30 days. Applies to ~8% of employers', perWorkerFn:(w,h,m,rate)=>rate*h*52*0.08*0.015 },
+];
+
+let scaleChartInst = null;
+let sectorChartInst = null;
+let currentTab = 'all';
+
+function setTab(t){ currentTab=t; document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick').includes("'"+t+"'"))); render(); }
+
+function getParams(){
+  return {
+    workers: +document.getElementById('workers').value,
+    market: document.getElementById('market').value,
+    hours: +document.getElementById('hours').value,
+    margin: +document.getElementById('margin').value,
+    hosp: +document.getElementById('hosp').value,
+    serv: +document.getElementById('serv').value,
+    cons: +document.getElementById('cons').value,
+  };
+}
+
+function getRate(market, sector){
+  const r = RATES[market];
+  if(sector==='hosp') return r.hosp;
+  if(sector==='serv') return r.serv;
+  return r.cons;
+}
+
+function avgRate(market){ const r=RATES[market]; return (r.hosp+r.serv+r.cons)/3; }
+
+function calcStream(s, workers, hours, margin, market){
+  const rate = avgRate(market);
+  return s.perWorkerFn(workers, hours, margin, rate) * workers;
+}
+
+function render(){
+  const p = getParams();
+  document.getElementById('hours-out').textContent = p.hours+' hrs';
+  document.getElementById('margin-out').textContent = p.margin+'%';
+  document.getElementById('hosp-out').textContent = p.hosp+'%';
+  document.getElementById('serv-out').textContent = p.serv+'%';
+  document.getElementById('cons-out').textContent = p.cons+'%';
+
+  const rate = avgRate(p.market);
+  const totalHourlyMargin = rate * p.hours * 52 * (p.margin/100) * p.workers;
+  const allStreams = STREAMS.map(s=>({...s, total: calcStream(s, p.workers, p.hours, p.margin, p.market)}));
+  const grandTotal = allStreams.reduce((a,s)=>a+s.total,0);
+  const trailerTotal = allStreams.filter(s=>s.cat==='trailer').reduce((a,s)=>a+s.total,0);
+  const perksTotal = allStreams.filter(s=>s.cat==='perks').reduce((a,s)=>a+s.total,0);
+
+  // Summary metrics
+  document.getElementById('summary-metrics').innerHTML = `
+    <div class="metric"><div class="lbl">Total annual revenue</div><div class="val">${fmt(grandTotal)}</div><div class="sub">${RATES[p.market].label}</div></div>
+    <div class="metric"><div class="lbl">Core labour margin</div><div class="val">${fmt(totalHourlyMargin)}</div><div class="sub">${p.margin}% of gross wages</div></div>
+    <div class="metric"><div class="lbl">Trailer & services</div><div class="val">${fmt(trailerTotal)}</div><div class="sub">${Math.round(trailerTotal/grandTotal*100)}% of total revenue</div></div>
+    <div class="metric"><div class="lbl">Perks & platform</div><div class="val">${fmt(perksTotal)}</div><div class="sub">${Math.round(perksTotal/grandTotal*100)}% of total revenue</div></div>
+  `;
+
+  // Streams table
+  const filtered = currentTab==='all' ? STREAMS : currentTab==='core' ? STREAMS.filter(s=>s.cat==='core') : currentTab==='trailer' ? STREAMS.filter(s=>s.cat==='trailer') : STREAMS.filter(s=>s.cat==='perks'||s.cat==='platform');
+  const maxVal = Math.max(...allStreams.map(s=>s.total));
+
+  let rows = filtered.map(s=>{
+    const val = allStreams.find(a=>a.id===s.id).total;
+    const pct = Math.round(val/grandTotal*100);
+    const barW = Math.round(val/maxVal*100);
+    return `<div class="stream-row">
+      <div><div class="stream-name">${s.name}</div><span class="badge ${s.badge}">${s.badgeText}</span></div>
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);text-align:right">${fmt(val)}</div>
+      <div><div class="stream-note" style="margin-bottom:4px">${s.desc}</div><div class="bar-bg"><div class="bar-fill" style="width:${barW}%"></div></div></div>
+      <div style="font-size:11px;color:var(--color-text-secondary);text-align:right">${pct}% of total</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('streams-table').innerHTML = rows + `<div class="total-row"><span style="font-weight:500;font-size:13px">Total annual revenue</span><span style="font-size:18px;font-weight:500">${fmt(grandTotal)}</span></div>`;
+
+  // Scale chart
+  const scales = [5000,10000,25000,50000,100000,250000];
+  const coreData = scales.map(w=>{
+    const s = STREAMS.find(x=>x.id==='labour');
+    return Math.round(s.perWorkerFn(w,p.hours,p.margin,rate)*w);
+  });
+  const trailerData = scales.map(w=> STREAMS.filter(s=>s.cat==='trailer').reduce((a,s)=>a+s.perWorkerFn(w,p.hours,p.margin,rate)*w,0));
+  const perksData = scales.map(w=> STREAMS.filter(s=>s.cat==='perks').reduce((a,s)=>a+s.perWorkerFn(w,p.hours,p.margin,rate)*w,0));
+
+  if(scaleChartInst) scaleChartInst.destroy();
+  scaleChartInst = new Chart(document.getElementById('scaleChart'),{
+    type:'bar',
+    data:{
+      labels:['5K','10K','25K','50K','100K','250K'],
+      datasets:[
+        {label:'Core labour margin',data:coreData,backgroundColor:'#378ADD'},
+        {label:'Trailer & services',data:trailerData,backgroundColor:'#1D9E75'},
+        {label:'Perks & platform',data:perksData,backgroundColor:'#BA7517'},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>c.dataset.label+': '+fmt(c.raw)}}},
+      scales:{
+        x:{stacked:true,ticks:{color:'#888'},grid:{display:false}},
+        y:{stacked:true,ticks:{callback:(v)=>fmt(v),color:'#888'},grid:{color:'rgba(128,128,128,0.1)'}}
+      }
+    }
+  });
+
+  // Sector cards & chart
+  const totalW = p.workers;
+  const hospW = Math.round(totalW * p.hosp/100);
+  const servW = Math.round(totalW * p.serv/100);
+  const consW = Math.round(totalW - hospW - servW);
+
+  function sectorRevenue(w, sector){
+    const r = getRate(p.market, sector);
+    return STREAMS.reduce((a,s)=>a+s.perWorkerFn(w,p.hours,p.margin,r)*w, 0);
+  }
+
+  const hospRev = sectorRevenue(hospW,'hosp');
+  const servRev = sectorRevenue(servW,'serv');
+  const consRev = sectorRevenue(consW,'cons');
+
+  document.getElementById('sector-cards').innerHTML = `
+    <div class="sector-grid">
+      <div class="sector-card">
+        <div class="s-name">Hospitality</div>
+        <div class="s-val" style="color:#185FA5">${fmt(hospRev)}</div>
+        <div class="s-lbl">${hospW.toLocaleString()} workers · ${RATES[p.market].hosp.toFixed(2)}/hr avg</div>
+        <div class="s-lbl" style="margin-top:4px">RSA, venue onboarding, perks dining</div>
+      </div>
+      <div class="sector-card">
+        <div class="s-name">Services</div>
+        <div class="s-val" style="color:#0F6E56">${fmt(servRev)}</div>
+        <div class="s-lbl">${servW.toLocaleString()} workers · ${RATES[p.market].serv.toFixed(2)}/hr avg</div>
+        <div class="s-lbl" style="margin-top:4px">Retail, admin, cleaning, FM</div>
+      </div>
+      <div class="sector-card">
+        <div class="s-name">Construction</div>
+        <div class="s-val" style="color:#854F0B">${fmt(consRev)}</div>
+        <div class="s-lbl">${consW.toLocaleString()} workers · ${RATES[p.market].cons.toFixed(2)}/hr avg</div>
+        <div class="s-lbl" style="margin-top:4px">White card, OSHA, traffic control certs</div>
+      </div>
+    </div>
+  `;
+
+  if(sectorChartInst) sectorChartInst.destroy();
+  sectorChartInst = new Chart(document.getElementById('sectorChart'),{
+    type:'bar',
+    data:{
+      labels:['Hospitality','Services','Construction'],
+      datasets:[
+        {label:'Core labour',data:[hospRev*.58,servRev*.58,consRev*.58].map(Math.round),backgroundColor:'#378ADD'},
+        {label:'Trailer',data:[hospRev*.27,servRev*.27,consRev*.27].map(Math.round),backgroundColor:'#1D9E75'},
+        {label:'Perks/platform',data:[hospRev*.15,servRev*.15,consRev*.15].map(Math.round),backgroundColor:'#BA7517'},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>c.dataset.label+': '+fmt(c.raw)}}},
+      scales:{
+        x:{stacked:true,ticks:{color:'#888'},grid:{display:false}},
+        y:{stacked:true,ticks:{callback:(v)=>fmt(v),color:'#888'},grid:{color:'rgba(128,128,128,0.1)'}}
+      }
+    }
+  });
+}
+
+document.querySelectorAll('select, input').forEach(el=>el.addEventListener('input', render));
+render();
+</script>
