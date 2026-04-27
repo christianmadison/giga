@@ -1,0 +1,68 @@
+<script>
+function getP(){
+  const market=$('market').value,
+        sector=$('sector').value,
+        workers=+$('workers').value,
+        hours=+$('hours').value,
+        marginPct=+$('margin').value,
+        margin=marginPct/100,
+        premium=+$('premium').value,
+        premPct=+$('prem-pct').value/100,
+        award=AWARD[market][sector],
+        isAus=market==='aus';
+
+  let blend=1.0;
+
+  if(isAus){
+    const std=+$('l-std').value/100,
+          sat=+$('l-sat').value/100,
+          sun=+$('l-sun').value/100,
+          eve=+$('l-eve').value/100,
+          ph=+$('l-ph').value/100;
+
+    blend = std*1.0 + sat*1.25 + sun*1.50 + eve*1.15 + ph*2.25;
+
+    const tot=Math.round((std+sat+sun+eve+ph)*100);
+    $('aus-warn').style.display=tot!==100?'':'none';
+    $('aus-tot').textContent=tot;
+  }
+  else{
+    const std=+$('u-std').value/100,
+          eve=+$('u-eve').value/100,
+          ot=+$('u-ot').value/100;
+
+    blend = std*1.0 + eve*1.15 + ot*1.50;
+
+    const tot=Math.round((std+eve+ot)*100);
+    $('us-warn').style.display=tot!==100?'':'none';
+    $('us-tot').textContent=tot;
+  }
+
+  blend = Math.max(blend, 1.0);
+
+  const utilization = 1.0;
+
+  const effAward = award * blend * utilization;
+  const annualHours = hours * 52;
+
+  const baseMarginPW = effAward * annualHours * margin;
+
+  const premEffective = premium * blend;
+  const premMarginPW = premEffective * annualHours * premPct * margin;
+
+  const agreedFull = award + premium;
+
+  const chargeRate = agreedFull * blend * (1 + margin);
+
+  const grossWagesPW = effAward * annualHours;
+
+  return {
+    market,sector,workers,hours,
+    margin,marginPct,premium,premPct,
+    award,effAward,blend,annualHours,
+    baseMarginPW,premMarginPW,
+    agreedFull,chargeRate,grossWagesPW,
+    isAus
+  };
+}
+</script>
